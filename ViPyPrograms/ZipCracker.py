@@ -16,7 +16,7 @@ def extractFile(zFile, password):
 
 def main():
     # tells the format used fro parameter opsions
-    parser = optparse.OptionParser("usage %prog " + "-f <zipfile> -d <dictionary>")
+    parser = optparse.OptionParser(usage="%prog  -f <zipfile> -d <dictionary>", version="%prog 1.0")
 
     # adds the zip file directory option
     parser.add_option('-f', dest='zname', type='string', help='specify zip file')

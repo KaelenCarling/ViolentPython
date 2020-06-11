@@ -9,12 +9,13 @@ def connectionScan(tgtHost, tgtPort):
         connSkt.connect((tgtHost, tgtPort))
         connSkt.send('ViolentPython\r\n')
         results = connSkt.recv(100)
-
+        print(results)
         print('%d/tcp open' % tgtPort)
         print(str(results))
 
         connSkt.close()
-    except:
+    except Exception :
+        print(Exception)
         print('%d/tcp closed' % tgtPort)
 
 

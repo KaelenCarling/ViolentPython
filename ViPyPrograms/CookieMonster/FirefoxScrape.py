@@ -30,6 +30,7 @@ from Crypto.Util.Padding import unpad
 from optparse import OptionParser
 import json
 from os import path
+import os
 
 # minimal 'ASN1 to string' function for displaying Key3.db and key4.db contents
 asn1Types = {0x30: 'SEQUENCE', 4: 'OCTETSTRING', 6: 'OBJECTIDENTIFIER', 2: 'INTEGER', 5: 'NULL'}
@@ -44,7 +45,8 @@ oidValues = {b'2a864886f70d010c050103': '1.2.840.113549.1.12.5.1.3 pbeWithSha1An
              }
 CKA_ID = unhexlify('f8000000000000000000000000000001')
 
-class FirefoxScrape:
+
+class FirefoxScraper:
 
     def __init__(self, dir, pwd):
         self.dir = dir
@@ -55,8 +57,6 @@ class FirefoxScrape:
 
     def getLongBE(self, d, a):
         return unpack('>L', (d)[a:a + 4])[0]
-
-
 
     def printASN1(self, d, l, rl):
         type = d[0]
@@ -193,7 +193,7 @@ class FirefoxScrape:
         ciphertext = asn1data[0][2].asOctets()
         return key_id, iv, ciphertext
 
-    def getLoginData(self, options=None):
+    def getLoginData(self):
         logins = []
         sqlite_file = self.dir + 'signons.sqlite'
         json_file = self.dir + 'logins.json'
@@ -365,6 +365,11 @@ class FirefoxScrape:
             return clearText, pbeAlgo
 
     def getKey(self, masterPassword, directory):
+        print(os.lstat(directory + 'key4.db'))
+        #print(os.path.abspath(directory + 'key4.db').replace("~", ""))
+        print((directory + 'key4.db'))
+        print(path.exists(directory + 'key4.db'))
+
         if path.exists(directory + 'key4.db'):
             conn = sqlite3.connect(directory + 'key4.db')  # firefox 58.0.2 / NSS 3.35 with key4.db in SQLite
             c = conn.cursor()
@@ -404,6 +409,8 @@ class FirefoxScrape:
             return None, None
 
     def returnPwdDic(self):
+
+        print(self.dir)
         loginList = [['', '', '']]
         key, algo = self.getKey(self.pwd, self.dir)
         if key == None:
